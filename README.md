@@ -1,4 +1,4 @@
 # hka
 hokie knowledge agent
 
-test
+a campus-specific tool that will give quick and verified answers from Virginia Tech’s official site.
