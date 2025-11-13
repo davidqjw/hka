@@ -1,0 +1,97 @@
+Metadata-Version: 2.4
+Name: hokieknowledgeagent
+Version: 0.0.0
+Summary: Virginia Tech Hokie Knowledge Agent
+Author: 
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: datasets
+Requires-Dist: base58
+Requires-Dist: nltk
+Requires-Dist: numpy
+Requires-Dist: langid
+Requires-Dist: openai
+Requires-Dist: peft
+Requires-Dist: PyYAML
+Requires-Dist: rank_bm25
+Requires-Dist: rouge
+Requires-Dist: spacy
+Requires-Dist: tiktoken
+Requires-Dist: torch
+Requires-Dist: tqdm
+Requires-Dist: transformers>=4.40.0
+Requires-Dist: bm25s[core]==0.2.1
+Requires-Dist: fschat
+Requires-Dist: streamlit
+Requires-Dist: chonkie<1.1.0,>=1.0.2
+Requires-Dist: gradio>=5.0.0
+Requires-Dist: rouge-chinese
+Requires-Dist: jieba
+Provides-Extra: core
+Requires-Dist: datasets; extra == "core"
+Requires-Dist: base58; extra == "core"
+Requires-Dist: nltk; extra == "core"
+Requires-Dist: numpy; extra == "core"
+Requires-Dist: langid; extra == "core"
+Requires-Dist: openai; extra == "core"
+Requires-Dist: peft; extra == "core"
+Requires-Dist: PyYAML; extra == "core"
+Requires-Dist: rank_bm25; extra == "core"
+Requires-Dist: rouge; extra == "core"
+Requires-Dist: spacy; extra == "core"
+Requires-Dist: tiktoken; extra == "core"
+Requires-Dist: torch; extra == "core"
+Requires-Dist: tqdm; extra == "core"
+Requires-Dist: transformers>=4.40.0; extra == "core"
+Requires-Dist: bm25s[core]==0.2.1; extra == "core"
+Requires-Dist: fschat; extra == "core"
+Requires-Dist: streamlit; extra == "core"
+Requires-Dist: chonkie<1.1.0,>=1.0.2; extra == "core"
+Requires-Dist: gradio>=5.0.0; extra == "core"
+Requires-Dist: rouge-chinese; extra == "core"
+Requires-Dist: jieba; extra == "core"
+Provides-Extra: retriever
+Requires-Dist: pyserini; extra == "retriever"
+Requires-Dist: sentence-transformers>=3.0.1; extra == "retriever"
+Provides-Extra: generator
+Requires-Dist: vllm; extra == "generator"
+Provides-Extra: multimodal
+Requires-Dist: timm; extra == "multimodal"
+Requires-Dist: torchvision; extra == "multimodal"
+Requires-Dist: pillow; extra == "multimodal"
+Requires-Dist: qwen_vl_utils; extra == "multimodal"
+Provides-Extra: full
+Requires-Dist: datasets; extra == "full"
+Requires-Dist: base58; extra == "full"
+Requires-Dist: nltk; extra == "full"
+Requires-Dist: numpy; extra == "full"
+Requires-Dist: langid; extra == "full"
+Requires-Dist: openai; extra == "full"
+Requires-Dist: peft; extra == "full"
+Requires-Dist: PyYAML; extra == "full"
+Requires-Dist: rank_bm25; extra == "full"
+Requires-Dist: rouge; extra == "full"
+Requires-Dist: spacy; extra == "full"
+Requires-Dist: tiktoken; extra == "full"
+Requires-Dist: torch; extra == "full"
+Requires-Dist: tqdm; extra == "full"
+Requires-Dist: transformers>=4.40.0; extra == "full"
+Requires-Dist: bm25s[core]==0.2.1; extra == "full"
+Requires-Dist: fschat; extra == "full"
+Requires-Dist: streamlit; extra == "full"
+Requires-Dist: chonkie<1.1.0,>=1.0.2; extra == "full"
+Requires-Dist: gradio>=5.0.0; extra == "full"
+Requires-Dist: rouge-chinese; extra == "full"
+Requires-Dist: jieba; extra == "full"
+Requires-Dist: pyserini; extra == "full"
+Requires-Dist: sentence-transformers>=3.0.1; extra == "full"
+Requires-Dist: vllm; extra == "full"
+Requires-Dist: timm; extra == "full"
+Requires-Dist: torchvision; extra == "full"
+Requires-Dist: pillow; extra == "full"
+Requires-Dist: qwen_vl_utils; extra == "full"
+Dynamic: description-content-type
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

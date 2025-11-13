@@ -1,0 +1,1 @@
+python -m flashrag.retriever.index_builder --retrieval_method bge-large-en-v1.5 --model_path models/bge-large-en-v1.5/ --corpus_path corpus/info.jsonl --save_dir indexes/ --use_fp16 --max_length 512 --batch_size 64 --pooling_method cls --sentence_transformer --faiss_type Flat
