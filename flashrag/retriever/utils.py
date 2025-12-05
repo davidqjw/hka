@@ -1,8 +1,9 @@
 import warnings
-from typing import Dict, Any, Union
+from typing import Dict, Any, List, Union
 import numpy as np
 import langid
 import datasets
+
 
 _has_printed_instruction = False
 
@@ -31,10 +32,7 @@ def set_default_instruction(model_name, is_query=True, is_zh=False):
 
     if "bge" in model_name.lower():
         if is_query:
-            if "zh" in model_name.lower() or is_zh:
-                instruction = "为这个句子生成表示以用于检索相关文章："
-            else:
-                instruction = "Represent this sentence for searching relevant passages: "
+            instruction = "Represent this sentence for searching relevant passages: "
 
     return instruction
 
@@ -89,3 +87,8 @@ def load_corpus(corpus_path: str):
         except:
             warnings.warn("No `contents` & `text` field found in corpus.")
     return corpus
+
+def load_docs(corpus, doc_idxs: List[int]):
+    results = [corpus[int(idx)] for idx in doc_idxs]
+
+    return results
