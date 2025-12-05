@@ -1,8 +1,9 @@
 import warnings
-from typing import Dict, List, Any, Union
+from typing import Dict, Any, List, Union
 import numpy as np
 import langid
 import datasets
+
 
 _has_printed_instruction = False
 
@@ -89,4 +90,5 @@ def load_corpus(corpus_path: str):
 
 def load_docs(corpus, doc_idxs: List[int]):
     results = [corpus[int(idx)] for idx in doc_idxs]
+
     return results

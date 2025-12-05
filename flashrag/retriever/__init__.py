@@ -1,2 +1,2 @@
-from flashrag.retriever.retreiver import *
-from flashrag.retreiver.utils import *
+from flashrag.retriever.retriever import *
+from flashrag.retriever.utils import *

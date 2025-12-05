@@ -2,7 +2,6 @@ from transformers import AutoTokenizer, AutoConfig
 import tiktoken
 import warnings
 
-
 class PromptTemplate:
     placeholders = ["reference", "question"]
     base_system_prompt = (
@@ -12,9 +11,8 @@ class PromptTemplate:
     )
     base_user_prompt = "Question: {question}"
 
-
     def __init__(self, config, system_prompt="", user_prompt="", reference_template=None, enable_chat=True):
-       
+        
         self.config = config
         self.is_openai = config["framework"] == "openai"
         self.max_input_len = config['generator_max_input_len']
@@ -37,7 +35,7 @@ class PromptTemplate:
         self.reference_template = reference_template
         self.tokenizer = None
         # self._check_placeholder()
-       
+        
     def _get_tokenizer(self):
         if self.tokenizer is None:
             if self.is_openai:
@@ -52,8 +50,6 @@ class PromptTemplate:
         return self.tokenizer
 
 
-
-
     def _check_placeholder(self):
         # check placeholder in prompt
         for holder in self.placeholders:
@@ -66,7 +62,6 @@ class PromptTemplate:
             if not flag and holder != "reference":
                 assert False
 
-
     def truncate_prompt(self, prompt):
         if self.is_openai:
             if self.enable_chat:
@@ -76,7 +71,6 @@ class PromptTemplate:
                 for message in prompt:
                     role_content = message['content']
                     encoded_message = self._get_tokenizer().encode(role_content)
-
 
                     if total_tokens + len(encoded_message) <= self.max_input_len:
                         truncated_messages.append(message)
@@ -94,9 +88,7 @@ class PromptTemplate:
                 half = int(self.max_input_len / 2)
                 truncated_messages = self._get_tokenizer().decode(tokenized_prompt[:half]) + self._get_tokenizer().decode(tokenized_prompt[-half:])
 
-
             return truncated_messages
-
 
         else:
             assert isinstance(prompt, str)
@@ -105,16 +97,12 @@ class PromptTemplate:
             except:
                 tokenized_prompt = self._get_tokenizer().encode(prompt, truncation=False, return_tensors="pt")[0]
 
-
             if len(tokenized_prompt) >= self.max_input_len:
                 print(f"The input text length is greater than the maximum length ({len(tokenized_prompt)} > {self.max_input_len}) and has been truncated!")
                 half = int(self.max_input_len / 2) - 20
                 prompt = self._get_tokenizer().decode(tokenized_prompt[:half], skip_special_tokens=True) + \
                         self._get_tokenizer().decode(tokenized_prompt[-half:], skip_special_tokens=True)
             return prompt
-
-
-
 
 
 
@@ -136,21 +124,17 @@ class PromptTemplate:
                 )
                 return self.truncate_prompt(prompt)
 
-
         if formatted_reference is None:
             if retrieval_result is not None:
                 formatted_reference = self.format_reference(retrieval_result)
             else:
                 formatted_reference = ""
 
-
         input_params = {"question": question, "reference": formatted_reference}
         input_params.update(**params)
 
-
         system_prompt = self.system_prompt.format(**input_params)
         user_prompt = self.user_prompt.format(**input_params)
-
 
         if self.is_chat and self.enable_chat:
             input = []
@@ -167,20 +151,17 @@ class PromptTemplate:
         else:
             input = "\n\n".join([prompt for prompt in [system_prompt, user_prompt] if prompt != ""])
 
-
         if previous_gen is not None and previous_gen not in ["", " "]:
             if self.is_openai:
                 if self.enable_chat:
                     input.append({"role": 'assistant', 'content': previous_gen})
                 else:    
                     input += f'<|endoftext|>{previous_gen}'
-               
+                
             else:
                 input += previous_gen
 
-
         return self.truncate_prompt(input)
-
 
     def get_string_with_varying_examplars(
         self,
@@ -197,7 +178,6 @@ class PromptTemplate:
         Select the maximum number of examplars that can be placed in the prompt
         """
 
-
         final_examplars = None
         num = len(examplars)
         while len(examplars) > 0:
@@ -211,7 +191,6 @@ class PromptTemplate:
                     **params,
                 )
 
-
                 possible_prompt_tokens = self._get_tokenizer().encode(possible_prompt)
                 if len(possible_prompt_tokens) <= max_length:
                     final_examplars = examplars[:num]
@@ -223,7 +202,6 @@ class PromptTemplate:
         if final_examplars is None:
             final_examplars = []
 
-
         final_prompt = self.get_string(
             question=question,
             retrieval_result=retrieval_result,
@@ -233,9 +211,7 @@ class PromptTemplate:
             **params,
         )
 
-
         return final_prompt
-
 
     def format_reference(self, retrieval_result):
         format_reference = ""
@@ -247,6 +223,5 @@ class PromptTemplate:
                 format_reference += self.reference_template.format(idx=idx, title=title, text=text)
             else:
                 format_reference += f"Doc {idx+1}(Title: {title}) {text}\n"
-
 
         return format_reference

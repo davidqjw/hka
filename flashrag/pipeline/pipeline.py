@@ -1,16 +1,11 @@
-
-
 from flashrag.utils import get_retriever, get_generator
 from flashrag.prompt import PromptTemplate
-
-
 
 
 class BasicPipeline:
     """Base object of all pipelines. A pipeline includes the overall process of RAG.
     If you want to implement a pipeline, you should inherit this class.
     """
-
 
     def __init__(self, config, prompt_template=None):
         self.config = config
@@ -20,12 +15,9 @@ class BasicPipeline:
             prompt_template = PromptTemplate(config)
         self.prompt_template = prompt_template
 
-
     def run(self):
         """The overall inference process of a RAG framework."""
         pass
-
-
 
 
 class SequentialPipeline(BasicPipeline):
@@ -41,7 +33,6 @@ class SequentialPipeline(BasicPipeline):
         else:
             self.retriever = retriever
 
-
     def run(self, question):
         retrieval_results = self.retriever.batch_search(question)
         input_prompts = [
@@ -50,5 +41,5 @@ class SequentialPipeline(BasicPipeline):
         ]
         pred_answer_list = self.generator.generate(input_prompts)
 
-
         return pred_answer_list[0] if len(pred_answer_list) == 1 else pred_answer_list
+
