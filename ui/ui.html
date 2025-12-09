@@ -1,249 +1,348 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hokie Knowledge Agent</title>
-  <style>
-    :root {
-      --bg:#121212;          /* page background: deep gray */
-      --me:#F97316;          /* user bubble: orange */
-      --bot:#7C2D12;         /* bot bubble: maroon */
-      --text:#e57d5e;        /* main text */
-      --input-bg:#1e1e1e;    /* input area background */
-      --button-bg:#861F41;   /* send button */
-      --button-text:#e8e8e8; /* send button text */
-      --panel:#1a1a1a;       /* header/footer panels + sidebar */
-      --border:#2b2b2b;      /* subtle borders */
-      --muted:#b57d69;       /* muted text */
-      --hover:#1f1f1f;       /* sidebar hover */
-      --active:#2a2a2a;      /* sidebar active */
-    }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hokie Knowledge Agent</title>
+    <style>
+        :root {
+            --bg: #121212;
+            /* page background: deep gray */
+            --me: #F97316;
+            /* user bubble: orange */
+            --bot: #7C2D12;
+            /* bot bubble: maroon */
+            --text: #e57d5e;
+            /* main text */
+            --input-bg: #1e1e1e;
+            /* input area background */
+            --button-bg: #861F41;
+            /* send button */
+            --button-text: #e8e8e8;
+            /* send button text */
+            --panel: #1a1a1a;
+            /* header/footer panels + sidebar */
+            --border: #2b2b2b;
+            /* subtle borders */
+            --muted: #b57d69;
+            /* muted text */
+            --hover: #1f1f1f;
+            /* sidebar hover */
+            --active: #2a2a2a;
+            /* sidebar active */
+        }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    /* App layout: sidebar | main column */
-    .app {
-      max-width: 1200px;
-      margin: 0 auto;
-      height: 100vh;
-      display: grid;
-      grid-template-columns: 260px 1fr;   /* sidebar + main */
-      grid-template-rows: auto 1fr auto;  /* header, chat, composer in main column */
-      grid-template-areas:
-        "sidebar header"
-        "sidebar chat"
-        "sidebar composer";
-    }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
 
-    /* Sidebar */
-    aside#sidebar {
-      grid-area: sidebar;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--border);
-      background: var(--panel);
-      min-height: 0; /* allow children to overflow with flex */
-    }
-    .sb-head {
-      padding: 14px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sb-title {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 700;
-      color: #f97316;
-      letter-spacing: .2px;
-    }
-    .sb-new {
-      padding: 8px 10px;
-      border: 0;
-      border-radius: 8px;
-      background: var(--button-bg);
-      color: var(--button-text);
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s;
-      white-space: nowrap;
-    }
-    .sb-new:hover { background: #a1365f; }
+        /* App layout: sidebar | main column */
+        .app {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            /* sidebar + main */
+            grid-template-rows: auto 1fr auto;
+            /* header, chat, composer in main column */
+            grid-template-areas:
+                "sidebar header"
+                "sidebar chat"
+                "sidebar composer";
+        }
 
-    .sb-list {
-      list-style: none;
-      margin: 0;
-      padding: 8px;
-      overflow: auto;
-      flex: 1 1 auto;
-    }
-    .sb-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      margin: 4px 0;
-      border-radius: 8px;
-      color: var(--text);
-      background: transparent;
-      border: 1px solid transparent;
-      cursor: pointer;
-      user-select: none;
-    }
-    .sb-item:hover { background: var(--hover); }
-    .sb-item.active {
-      background: var(--active);
-      border-color: var(--border);
-    }
-    .sb-item .dot {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--me);
-      flex: 0 0 8px;
-    }
-    .sb-item .title {
-      font-size: 13px; line-height: 1.2; color: var(--text);
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      flex: 1 1 auto;
-    }
-    /* .sb-item .time {
-      font-size: 11px; color: var(--muted);
-      flex: 0 0 auto;
-    } */
+        /* Sidebar */
+        aside#sidebar {
+            grid-area: sidebar;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: var(--panel);
+            min-height: 0;
+            /* allow children to overflow with flex */
+        }
 
-    header {
-      grid-area: header;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 18px;
-      color: #f97316;
-      font-weight: 700;
-    }
+        .sb-head {
+            padding: 14px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .chat {
-      grid-area: chat;
-      padding: 16px;
-      overflow: auto;
-      scroll-behavior: smooth;
-      background: var(--bg);
-    }
+        .sb-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: #f97316;
+            letter-spacing: .2px;
+        }
 
-    .msg { display: flex; margin: 10px 0; }
-    .msg.user { justify-content: flex-end; }
-    .msg.bot  { justify-content: flex-start; }
+        .sb-new {
+            padding: 8px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+            white-space: nowrap;
+        }
 
-    .bubble {
-      padding: 12px 14px;
-      border-radius: 14px;
-      max-width: 72ch;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      border: 1px solid transparent;
-    }
-    /* NOTE: keeping your current color choice for user bubble */
-    .user .bubble {
-      background: var(--bot);
-      color: #e8e8e8;
-      border-top-right-radius: 6px;
-      border-color: #a0431d;
-    }
-    .typing { opacity: .7; font-style: italic; }
+        .sb-new:hover {
+            background: #a1365f;
+        }
 
-    /* Composer — center the textbox + keep it half width */
-    form {
-      grid-area: composer;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      justify-content: center;      /* center children horizontally */
-      padding: 18px;
-      border-top: 1px solid var(--border);
-      background: var(--panel);
-    }
-    textarea {
-      flex: 0 1 50%;                /* half width */
-      resize: none;
-      min-height: 50px;
-      max-height: 160px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 14px;
-    }
-    textarea::placeholder { color: #c0694ebc; }
+        .sb-list {
+            list-style: none;
+            margin: 0;
+            padding: 8px;
+            overflow: auto;
+            flex: 1 1 auto;
+        }
 
-    textarea:focus { outline:none; box-shadow: none; }
+        .sb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            margin: 4px 0;
+            border-radius: 8px;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            user-select: none;
+        }
 
-    button#send {
-      padding: 10px 16px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--button-bg);
-      color: var(--button-text);
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s;
-      align-self: stretch;           /* match textarea height nicely */
-    }
-    button#send:hover:not([disabled]) { background: #fb7a1f; }
-    button#send[disabled] { opacity: .6; cursor: not-allowed; }
+        .sb-item:hover {
+            background: var(--hover);
+        }
 
-    @media (max-width: 900px) {
-      .app {
-        grid-template-columns: 1fr; /* stack */
-        grid-template-rows: auto auto 1fr auto;
-        grid-template-areas:
-          "header"
-          "sidebar"
-          "chat"
-          "composer";
-      }
-      aside#sidebar { max-height: 200px; }
-      textarea { flex: 1 1 100%; }  /* full width on small screens */
-      button#send { align-self: center; }
-    }
-  </style>
+        .sb-item.active {
+            background: var(--active);
+            border-color: var(--border);
+        }
+
+        .sb-item .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--me);
+            flex: 0 0 8px;
+        }
+
+        .sb-item .title {
+            font-size: 13px;
+            line-height: 1.2;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1 1 auto;
+        }
+
+        .sb-item {
+            position: relative;
+        }
+
+        .sb-item .sb-del {
+            margin-left: 8px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+        }
+
+        .sb-item .sb-del:hover {
+            color: #f97316;
+        }
+
+
+        header {
+            grid-area: header;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #f97316;
+            font-weight: 700;
+        }
+
+        .chat {
+            grid-area: chat;
+            padding: 16px;
+            overflow: auto;
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        .msg {
+            display: flex;
+            margin: 10px 0;
+        }
+
+        .msg.user {
+            justify-content: flex-end;
+        }
+
+        .msg.bot {
+            justify-content: flex-start;
+        }
+
+        .bubble {
+            padding: 12px 14px;
+            border-radius: 14px;
+            max-width: 72ch;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid transparent;
+        }
+
+        /* NOTE: keeping your current color choice for user bubble */
+        .user .bubble {
+            background: var(--bot);
+            color: #e8e8e8;
+            border-top-right-radius: 6px;
+            border-color: #a0431d;
+        }
+
+        .typing {
+            opacity: .7;
+            font-style: italic;
+        }
+
+        /* Composer — center the textbox + keep it half width */
+        form {
+            grid-area: composer;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            justify-content: center;
+            /* center children horizontally */
+            padding: 18px;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+        }
+
+        textarea {
+            flex: 0 1 50%;
+            /* half width */
+            resize: none;
+            min-height: 50px;
+            max-height: 160px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        textarea::placeholder {
+            color: #c0694ebc;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        button#send {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+            align-self: stretch;
+            /* match textarea height nicely */
+        }
+
+        button#send:hover:not([disabled]) {
+            background: #fb7a1f;
+        }
+
+        button#send[disabled] {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 900px) {
+            .app {
+                grid-template-columns: 1fr;
+                /* stack */
+                grid-template-rows: auto auto 1fr auto;
+                grid-template-areas:
+                    "header"
+                    "sidebar"
+                    "chat"
+                    "composer";
+            }
+
+            aside#sidebar {
+                max-height: 200px;
+            }
+
+            textarea {
+                flex: 1 1 100%;
+            }
+
+            /* full width on small screens */
+            button#send {
+                align-self: center;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="app">
-    <!-- Sidebar: History + New Chat -->
-    <aside id="sidebar">
-      <div class="sb-head">
-        <h2 class="sb-title">History</h2>
-        <button class="sb-new" id="newChat">+ New Chat</button>
-      </div>
-      <ul class="sb-list" id="historyList"></ul>
-    </aside>
+    <div class="app">
+        <!-- Sidebar: History + New Chat -->
+        <aside id="sidebar">
+            <div class="sb-head">
+                <h2 class="sb-title">History</h2>
+                <button class="sb-new" id="newChat">+ New Chat</button>
+            </div>
+            <ul class="sb-list" id="historyList"></ul>
+        </aside>
 
-    <header>
-      <h1>Hokie Knowledge Agent</h1>
-    </header>
+        <header>
+            <h1>Hokie Knowledge Agent</h1>
+        </header>
 
-    <main id="chat" class="chat"></main>
+        <main id="chat" class="chat"></main>
 
-    <form id="composer">
-      <textarea id="input" placeholder="Type your question"></textarea>
-      <button id="send" type="submit">Send</button>
-    </form>
-  </div>
+        <form id="composer">
+            <textarea id="input" placeholder="Type your question"></textarea>
+            <button id="send" type="submit">Send</button>
+        </form>
+    </div>
 
-  <script src="app.js"></script>
-  
+    <script src="app.js"></script>
+
 </body>
+
 </html>
