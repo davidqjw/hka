@@ -1,0 +1,35 @@
+data_dir: "dataset/"
+dataset_name: "user query"
+
+framework: hf 
+generator_model: llama2-7B-chat
+generator_model_path: "models/llama2-7b-chat"
+generator_max_input_len: 8192
+generator_batch_size: 1
+generation_params:
+  max_tokens: 512
+
+corpus_path: corpus/info.jsonl
+
+retrieval_method: "bge-large-en-v1.5"
+retrieval_model_path: BAAI/bge-large-en-v1.5
+retrieval_query_max_length: 128
+retrieval_batch_size: 32
+retrieval_pooling_method: ~
+
+retrieval_topk: 3
+retrieval_use_fp16: True
+
+faiss_gpu: False
+use_sentence_transformer: True
+silent_retrieval: True
+instruction: ~ 
+
+
+index_path: indexes/info_bge-large-en-v1.5_Flat.index
+
+gpu_id: "0"
+
+metric_setting:
+  llm_judge_setting:
+    model_name: "llama2-7b-chat"
