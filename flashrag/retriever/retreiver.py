@@ -1,8 +1,9 @@
 import os
-from flashrag.retriever.utils import load_corpus, load_docs, convert_numpy
+from flashrag.retriever.utils import load_corpus, load_docs
 import faiss
 import json
-from flashrag.retriever.encoder import Encoder, STEncoder
+from typing import List, Dict
+from flashrag.retriever.encoder import  STEncoder
 import warnings
 class BaseRetriever:
     """Base object for all retrievers."""
@@ -37,39 +38,11 @@ class BaseRetriever:
         self.index_path = self._config["index_path"]
         self.corpus_path = self._config["corpus_path"]
 
-
-        self.save_cache = self._config["save_retrieval_cache"]
-        self.use_cache = self._config["use_retrieval_cache"]
-        self.cache_path = self._config["retrieval_cache_path"]
-
-
-        if self.save_cache:
-            self.cache_save_path = os.path.join(self._config["save_dir"], "retrieval_cache.json")
-            self.cache = {}
-        if self.use_cache:
-            assert self.cache_path is not None
-            with open(self.cache_path, "r") as f:
-                self.cache = json.load(f)
         self.silent = self._config["silent_retrieval"] if "silent_retrieval" in self._config else False
 
 
     def update_additional_setting(self):
         pass
-
-
-    def _save_cache(self):
-        self.cache = convert_numpy(self.cache)
-
-
-        def custom_serializer(obj):
-            if isinstance(obj, np.float32):
-                return float(obj)
-            raise TypeError(f"Type {type(obj)} not serializable")
-
-
-        with open(self.cache_save_path, "w") as f:
-            json.dump(self.cache, f, indent=4, default=custom_serializer)
-
 
     def _search(self, query: str, num: int, return_score: bool) -> List[Dict[str, str]]:
         r"""Retrieve topk relevant documents in corpus.
@@ -96,6 +69,19 @@ class BaseRetriever:
         return self._search(*args, **kwargs)
 
 
+    def batch_search(self, *args, **kwargs):
+        return self._batch_search(*args, **kwargs)
+
+class BaseTextRetriever(BaseRetriever):
+    r"""Base text retriever."""
+
+
+    def __init__(self, config):
+        super().__init__(config)
+        
+    def search(self, *args, **kwargs):
+        return self._search(*args, **kwargs)
+    
     def batch_search(self, *args, **kwargs):
         return self._batch_search(*args, **kwargs)
    
@@ -154,16 +140,7 @@ class DenseRetriever(BaseTextRetriever):
                 silent=self.silent,
             )
         else:
-            # check pooling method
-            self._check_pooling_method(self.retrieval_model_path, self.pooling_method)
-            self.encoder = Encoder(
-                model_name=self.retrieval_method,
-                model_path=self.retrieval_model_path,
-                pooling_method=self.pooling_method,
-                max_length=self.query_max_length,
-                use_fp16=self.use_fp16,
-                instruction=self.instruction,
-            )
+            raise NotImplementedError("Only SentenceTransformer based retriever is implemented.")
 
 
     def _check_pooling_method(self, model_path, pooling_method):
